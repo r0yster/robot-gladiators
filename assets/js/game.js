@@ -1,4 +1,8 @@
-/* GAME FUNCTIONS */
+//****************//
+//                //
+// GAME FUNCTIONS //
+//                //
+//****************//
 
 // function to generate a random numeric value
 var randomNumber = function(min, max) {
@@ -9,13 +13,15 @@ var randomNumber = function(min, max) {
 
 var fightOrSkip = function() {
     // ask player if they'd like to fight or wkip using fightOrSkip function 
-    var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.").toLowerCase();
+    var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
 
     // Conditional Recursive Function Call
     if (promptFight === "" || promptFight === null) {
         window.alert("You need to provide a valid answer! Please try again.");
         return fightOrSkip();
     }
+
+    promptFight = promptFight.toLowerCase();
 
     // if player picks "skip" confirm and then stop the loop
     if (promptFight === "skip") {
@@ -81,7 +87,6 @@ var fight = function(enemy) {
             
             // remove player's health by subtactin gthe amount we set in the damage variable
             playerInfo.health = Math.max(0, playerInfo.health - damage);
-
             console.log(
                 enemy.name + " attacked " + playerInfo.name + ". " + playerInfo.name + " now has " + " health remaining." 
             );
@@ -108,6 +113,9 @@ var startGame = function() {
 
     // fight each enemy-robot by looping over them and fighting them one at a time
     for (var i = 0; i < enemyInfo.length; i++) {
+        //check player stats
+        console.log(playerInfo);
+
         // if player is still alive, keep fighting
         if (playerInfo.health > 0) {
             // let player know what round they are in, remember that arrays start at 0 so it needs to have 1 added to it
@@ -119,6 +127,8 @@ var startGame = function() {
             // set health for picked enemy
             pickedEnemyObj.health = randomNumber(40, 60);
             
+            console.log(pickedEnemyObj);
+
             // pass the picked enemy.name variable's value into the fight function, where it will assume the value of the enemy.name parameter
             fight(pickedEnemyObj);
 
@@ -148,11 +158,19 @@ var startGame = function() {
 var endGame = function() {
     window.alert("The game has now ended. Let's see how you did!")
 
-    // if player is still alive, player wins!
-    if (playerInfo.health > 0) {
-        window.alert("Great job, you've survived that game! You now have a score of " + playerInfo.money + ".");
+    var highScore = localStorage.getItem("highscore");
+    if (highScore === null) {
+        highScore = 0;
+    }
+
+    // if player has more money than the high score, player has new high score!
+    if (playerInfo.money > highScore) {
+        localStorage.setItem("highscore", playerInfo.money);
+        localStorage.setItem("name", playerInfo.name);
+
+        alert(playerInfo.name + " now has the high score of " + playerInfo.money + "!");
     } else {
-        window.alert("You've lost your robot in battle.");
+        alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
     }
 
     // ask player if they'd like to play again
@@ -181,11 +199,9 @@ var shop = function() {
             break;
         case 3:
             window.alert("Leaving the store");
-            // do nothing, so function will end
             break;
         default:
             window.alert("You did not pick a valid option. Try again.");
-            // call shop() again to force player to pick a valid option
             shop();
             break;
     }
@@ -202,10 +218,13 @@ var getPlayerName = function() {
     console.log("Your robot's name is " + name);
     return name;
 }
-
 /* END GAME FUNCTIONS */
 
-/* GAME INFORMATION /VARIABLES */
+//******************************//
+//                              //
+// GAME INFORMATION / VARIABLES //
+//                              //
+//******************************//
 
 // player information
 var playerInfo = {
